@@ -598,7 +598,9 @@ static int receive_length_data(urg_t *urg, long length[],
 }
 
 
-//!  Gets measurement data
+/*
+ * 收到测量数据
+ */
 static int receive_data(urg_t *urg, long data[], unsigned short intensity[],
                         long *time_stamp)
 {
@@ -762,7 +764,9 @@ int urg_open(urg_t *urg, urg_connection_type_t connection_type,
     return ret;
 }
 
-
+/*
+ * 关闭和雷达的通信接口
+ */
 void urg_close(urg_t *urg)
 {
     if (urg->is_active) {
@@ -1093,7 +1097,9 @@ int urg_laser_off(urg_t *urg)
     return urg_stop_measurement(urg);
 }
 
-
+/*
+ * 发送RS指令重启sensor
+ */
 int urg_reboot(urg_t *urg)
 {
     int expected[] = { 0, 1, EXPECTED_END };
@@ -1106,7 +1112,8 @@ int urg_reboot(urg_t *urg)
 
     // After sending the 2nd RB then close the connection
     for (i = 0; i < 2; ++i) {
-        ret = scip_response(urg, "RB\n", expected, urg->timeout, NULL, 0);
+		/* 原来写的"RB\n"，改成RS，待测试 */
+        ret = scip_response(urg, "RS\n", expected, urg->timeout, NULL, 0);
         if (ret < 0) {
             return set_errno_and_return(urg, URG_INVALID_RESPONSE);
         }

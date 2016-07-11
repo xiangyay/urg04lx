@@ -39,8 +39,10 @@ static void check_base_name(const char* dir_name, const char *file_name)
     int n = sizeof(search_base_names) / sizeof(search_base_names[0]);
     int i;
 
+	/* 和search_base_names中的内容逐一进行比对 */
     for (i = 0; i < n; ++i) {
         const char *base_name = search_base_names[i];
+		/* 数据比对 */
         if (!strncmp(base_name, file_name, strlen(base_name))) {
             snprintf(found_ports[found_ports_size], DEVICE_NAME_SIZE,
                      "%s/%s", dir_name, file_name);
@@ -49,13 +51,16 @@ static void check_base_name(const char* dir_name, const char *file_name)
     }
 }
 
-
+/*
+ * 自动查找sensor连接的端口
+ */
 int urg_serial_find_port(void)
 {
     int n = sizeof(search_dir_names) / sizeof(search_dir_names[0]);
     int i;
 
     found_ports_size = 0;
+	/* 遍历search_dir_names中的目录查找设备 */
     for (i = 0; i < n; ++i) {
         struct dirent* dir;
         const char *dir_name = search_dir_names[i];

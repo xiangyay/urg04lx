@@ -1,7 +1,6 @@
 /*!
   \file
-   Serial communications in Linux
-  \author Satofumi KAMIMURA
+   LinuxµÄ´®¿ÚÅäÖÃ
 
   $Id: urg_serial_linux.c,v c5747add6615 2015/05/07 03:18:34 alexandr $
 */
