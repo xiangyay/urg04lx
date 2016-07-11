@@ -14,6 +14,7 @@
 
 int open_urg_sensor(urg_t *urg, int argc, char *argv[])
 {
+	/* 设置需要连接的端口 */
     const char *device = "/dev/ttyACM0";
 	/* 端口连接方式: 串口 */
     urg_connection_type_t connection_type = URG_SERIAL;
@@ -21,21 +22,6 @@ int open_urg_sensor(urg_t *urg, int argc, char *argv[])
     long baudrate_or_port = 115200;
     const char *ip_address = "192.168.0.10";
     int i;
-
-    /* 更改连接类型，部分型号的sensor有以太网口，这部分代码在URG04-LX应该可以裁剪 */
-    for (i = 1; i < argc; ++i) {
-        if (!strcmp(argv[i], "-e")) {
-            connection_type = URG_ETHERNET;
-            baudrate_or_port = 10940;
-            device = ip_address;
-        }
-        if (!strcmp(argv[i], "-e") || !strcmp(argv[i], "-s")) {
-            if (argc > i + 1) {
-                ++i;
-                device = argv[i];
-            }
-        }
-    }
 
     // 连接设备
     if (urg_open(urg, connection_type, device, baudrate_or_port) < 0) {

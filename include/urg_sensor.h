@@ -55,13 +55,16 @@ extern int test_msg__g;
     (*urg_error_handler)(const char *status, void *urg);
 
 
-    /*!
-      \brief URG sensor control structure
-    */
+    /*
+     * URG sensor控制结构体
+     */
     typedef struct
     {
+    	/* 保存sensor状态 */
         int is_active;
+		/* sensor的错误状态值 */
         int last_errno;
+		/* 端口连接方式 */
         urg_connection_t connection;
 
         int first_data_index;

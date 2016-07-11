@@ -25,7 +25,9 @@ static int min(int a, int b)
     return (a < b) ? a : b;
 }
 
-
+/*
+ * 解析urg_t结构体中的last_errno，返回错误值的具体信息
+ */
 const char *urg_error(const urg_t *urg)
 {
     typedef struct
@@ -112,6 +114,7 @@ long urg_scan_usec(const urg_t *urg)
 
 int urg_max_data_size(const urg_t *urg)
 {
+	/* 判断sensor状态 */
     if (!urg->is_active) {
         return URG_NOT_CONNECTED;
     }
@@ -207,11 +210,11 @@ int urg_step2index(const urg_t *urg, int step)
                urg->last_data_index);
 }
 
+/*
+ * 延时函数，入参为ms级别延时
+ */
 void urg_delay(int delay_msec)
 {
-#if defined(URG_WINDOWS_OS)
-    Sleep(delay_msec);
-#else
+	/* usleep为linux系统调用，休眠时间us */
     usleep(1000 * delay_msec);
-#endif
 }

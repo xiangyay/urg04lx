@@ -8,7 +8,9 @@
 
 #include "urg_ring_buffer.h"
 
-
+/*
+ * 初始化一个环形buffer
+ */
 void ring_initialize(ring_buffer_t *ring, char *buffer, const int shift_length)
 {
     ring->buffer = buffer;
@@ -16,14 +18,18 @@ void ring_initialize(ring_buffer_t *ring, char *buffer, const int shift_length)
     ring_clear(ring);
 }
 
-
+/*
+ * 清空一个环形buffer
+ */
 void ring_clear(ring_buffer_t *ring)
 {
     ring->first = 0;
     ring->last = 0;
 }
 
-
+/*
+ * 返回一个环形buffer当前占用空间的大小
+ */
 int ring_size(const ring_buffer_t *ring)
 {
     int first = ring->first;
@@ -32,13 +38,17 @@ int ring_size(const ring_buffer_t *ring)
     return (last >= first) ? last - first : ring->buffer_size - (first - last);
 }
 
-
+/*
+ * 返回环形buffer的容量
+ */
 int ring_capacity(const ring_buffer_t *ring)
 {
     return ring->buffer_size - 1;
 }
 
-
+/*
+ * 复制一个环形buffer
+ */
 static void byte_move(char *dest, const char *src, int n)
 {
     const char *last_p = dest + n;
@@ -47,13 +57,16 @@ static void byte_move(char *dest, const char *src, int n)
     }
 }
 
-
+/*
+ * 向环形buffer写入数据
+ */
 int ring_write(ring_buffer_t *ring, const char *data, int size)
 {
+	/* 获取buffer的剩余大小 */
     int free_size = ring_capacity(ring) - ring_size(ring);
     int push_size = (size > free_size) ? free_size : size;
 
-    // Stores the data
+    /* 存储数据 */
     if (ring->first <= ring->last) {
         // Stores data at the last element of the buffer and before buffer_size
         int left_size = 0;
@@ -78,7 +91,9 @@ int ring_write(ring_buffer_t *ring, const char *data, int size)
     return push_size;
 }
 
-
+/*
+ * 从环形buffer读取数据
+ */
 int ring_read(ring_buffer_t *ring, char *buffer, int size)
 {
     // Reads data

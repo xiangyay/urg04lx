@@ -20,21 +20,30 @@
 #define snprintf _snprintf
 #endif
 
+/*
+ * DEBUG模式开关
+ * 置1时打开DEBUG输出
+ * 清0时关闭DEBUG输出
+ */
 int test_msg__g = 1;
 
 enum {
     URG_FALSE = 0,
     URG_TRUE = 1,
-
+	/* 一个数据区的最大长度 */
     BUFFER_SIZE = 64 + 2 + 6,
 
     EXPECTED_END = -1,
 
     RECEIVE_DATA_TIMEOUT,
-    RECEIVE_DATA_COMPLETE,      /*!<  Data was received correctly */
+    /* 数据已经正确收到的标志 */
+    RECEIVE_DATA_COMPLETE,
 
+	/* PP指令返回的行数 */
     PP_RESPONSE_LINES = 10,
+	/* VV指令返回的行数 */
     VV_RESPONSE_LINES = 7,
+	/* II指令返回的行数 */
     II_RESPONSE_LINES = 9,
 
     MAX_TIMEOUT = 140,
@@ -45,7 +54,9 @@ static const char NOT_CONNECTED_MESSAGE[] = "not connected.";
 static const char RECEIVE_ERROR_MESSAGE[] = "receive error.";
 
 
-//!  Calculates the checksum value
+/*
+ * 计算buffer数据区的校验和
+ */
 static char scip_checksum(const char buffer[], int size)
 {
     unsigned char sum = 0x00;
@@ -55,7 +66,7 @@ static char scip_checksum(const char buffer[], int size)
         sum += buffer[i];
     }
 
-    // Refer to the SCIP specification for details
+    /* 注意对照SCIP通信协议规范 Page.9 */
     return (sum & 0x3f) + 0x30;
 }
 
@@ -67,7 +78,7 @@ static int set_errno_and_return(urg_t *urg, int urg_errno)
 }
 
 
-/* 返回接收到的行数 */
+/* 返回接收到的数据行数 */
 static int scip_response(urg_t *urg, const char* command,
                          const int expected_ret[], int timeout,
                          char *receive_buffer, int receive_buffer_max_size)
@@ -325,6 +336,7 @@ static int receive_parameter(urg_t *urg)
 
     int ret = scip_response(urg, "PP\n", pp_expected, MAX_TIMEOUT,
                             receive_buffer, RECEIVE_BUFFER_SIZE);
+	/* 错误处理部分 */
     if (ret < 0) {
         return ret;
     } else if (ret < PP_RESPONSE_LINES) {
@@ -701,13 +713,15 @@ static int receive_data(urg_t *urg, long data[], unsigned short intensity[],
 
 /*
  * 打开和雷达的通信接口
+ * 入参: urg_t结构体，连接类型，设备端口号，波特率
  */
 int urg_open(urg_t *urg, urg_connection_type_t connection_type,
              const char *device_or_address, long baudrate_or_port)
 {
     int ret;
     long baudrate = baudrate_or_port;
-
+	
+	/* 设置urg_t结构体参数 */
     urg->is_active = URG_FALSE;
     urg->is_sending = URG_TRUE;
     urg->last_errno = URG_NOT_CONNECTED;
@@ -720,30 +734,14 @@ int urg_open(urg_t *urg, urg_connection_type_t connection_type,
                           device_or_address, baudrate_or_port);
 	/* 端口打开失败 */
     if (ret < 0) {
-        switch (connection_type) {
-        case URG_SERIAL:
-            urg->last_errno = URG_SERIAL_OPEN_ERROR;
-            break;
-
-        case URG_ETHERNET:
-            urg->last_errno = URG_ETHERNET_OPEN_ERROR;
-            break;
-
-        default:
-            urg->last_errno = URG_INVALID_RESPONSE;
-            break;
-        }
+        urg->last_errno = URG_SERIAL_OPEN_ERROR;
         return urg->last_errno;
     }
 
-    // 调整到特定的波特率来连接URG sensor
-    if (connection_type == URG_ETHERNET) {
-        // 在以太网中设置一个假的波特率
-        baudrate = 115200;
-    }
-
+	/* 设定波特率 连接到sensor */
     ret = connect_urg_device(urg, baudrate);
     if (ret != URG_NO_ERROR) {
+		/* sensor全部正常不会运行到这里 */
         return set_errno_and_return(urg, ret);
     }
     urg->is_sending = URG_FALSE;
@@ -1199,7 +1197,9 @@ static const char *receive_command_response(urg_t *urg,
     return NULL;
 }
 
-
+/*
+ * 获取URG sensor型号
+ */
 const char *urg_sensor_product_type(urg_t *urg)
 {
     enum {
@@ -1241,7 +1241,9 @@ const char *urg_sensor_serial_id(urg_t *urg)
     return (p) ? p : RECEIVE_ERROR_MESSAGE;
 }
 
-
+/*
+ * 获取URG sensor的固件版本号
+ */
 const char *urg_sensor_firmware_version(urg_t *urg)
 {
     enum {
@@ -1266,7 +1268,9 @@ const char *urg_sensor_firmware_version(urg_t *urg)
     return (p) ? p : RECEIVE_ERROR_MESSAGE;
 }
 
-
+/*
+ * 获取URG sensor当前的状态
+ */
 const char *urg_sensor_status(urg_t *urg)
 {
     enum {

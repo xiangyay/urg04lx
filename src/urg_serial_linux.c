@@ -86,7 +86,9 @@ void serial_close(urg_serial_t *serial)
     }
 }
 
-
+/*
+ * 串口波特率设置
+ */
 int serial_set_baudrate(urg_serial_t *serial, long baudrate)
 {
     long baudrate_value = -1;
@@ -120,9 +122,10 @@ int serial_set_baudrate(urg_serial_t *serial, long baudrate)
         return -1;
     }
 
-    /*  Changes the baudrate */
+    /*  设置输入输出波特率(系统调用) */
     cfsetospeed(&serial->sio, baudrate_value);
     cfsetispeed(&serial->sio, baudrate_value);
+	/* 设置终端属性 */
     tcsetattr(serial->fd, TCSADRAIN, &serial->sio);
     serial_clear(serial);
 

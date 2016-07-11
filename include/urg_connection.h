@@ -35,8 +35,8 @@ typedef enum {
 
 
 /*!
-  \brief Connection resources
-*/
+ * 连接方式定义
+ */
 typedef struct
 {
     urg_connection_type_t type; //!<  Type of connection
