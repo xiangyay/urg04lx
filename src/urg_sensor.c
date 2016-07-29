@@ -1112,7 +1112,7 @@ int urg_reboot(urg_t *urg)
 
     // After sending the 2nd RB then close the connection
     for (i = 0; i < 2; ++i) {
-		/* 原来写的"RB\n"，改成RS，待测试 */
+		/* 原来程序写的"RB\n"，根据SCIP2.0协议改成RS，待测试 */
         ret = scip_response(urg, "RS\n", expected, urg->timeout, NULL, 0);
         if (ret < 0) {
             return set_errno_and_return(urg, URG_INVALID_RESPONSE);
