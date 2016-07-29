@@ -17,3 +17,4 @@ HOW TO COMPILE A PROGRAM WITH THIS LIB
 		% gcc -I/usr/local/include/urg_c test.c -o test -lurg_c -lm
 	You can also use the urg_c-config compile script (installed with the library). The example above can be compiled as:
 		% gcc `urg_c-config --cflags` test.c -o test `urg_c-config --libs` -lm
+
