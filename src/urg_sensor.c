@@ -197,7 +197,7 @@ static void ignore_receive_data_with_qt(urg_t *urg, int timeout)
     ignore_receive_data(urg, timeout);
 }
 
-
+/* 改变传感器的波特率 */
 static int change_sensor_baudrate(urg_t *urg,
                                   long current_baudrate, long next_baudrate)
 {
