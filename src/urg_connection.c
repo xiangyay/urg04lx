@@ -8,7 +8,9 @@
 
 #include "urg_connection.h"
 
-
+/*
+ 打开连接端口
+ */
 int connection_open(urg_connection_t *connection,
                     urg_connection_type_t connection_type,
                     const char *device, long baudrate_or_port)
@@ -16,10 +18,11 @@ int connection_open(urg_connection_t *connection,
     connection->type = connection_type;
 
     switch (connection_type) {
+	/* 串口连接方式 */
     case URG_SERIAL:
         return serial_open(&connection->serial, device, baudrate_or_port);
         break;
-
+	/* 以太网连接方式 */
     case URG_ETHERNET:
         return tcpclient_open(&connection->tcpclient,
                               device, baudrate_or_port);

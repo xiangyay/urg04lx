@@ -9,7 +9,7 @@
 #include "urg_ring_buffer.h"
 
 /*
- * 初始化一个环形buffer
+ * 初始化一个环形buffer，这一部分可以看一下数据结构的知识，循环队列
  */
 void ring_initialize(ring_buffer_t *ring, char *buffer, const int shift_length)
 {
